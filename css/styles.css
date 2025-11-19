@@ -1,0 +1,191 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  height: 100vh;
+  overflow: hidden;
+  background-color: 000000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Pantalla de bloqueo */
+#lock-screen {
+  background: url("../assets/fondos/fondoazul.png") center/cover no-repeat;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+#lock-bg{
+  position: center;
+  top: 120px;
+  left: 120px;
+  width: 300px;
+  height: 300px;
+  border-radius: 20px;
+}
+
+#lock-screen h1 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+
+#pin-input {
+  font-size: 1.5em;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  text-align: center;
+  width: 200px;
+}
+
+#unlock-btn {
+  margin-top: 15px;
+  font-size: 1.5em;
+  padding: 10px 30px;
+  border-radius: 10px;
+  border: none;
+  background-color: #0078d7;
+  color: white;
+  cursor: pointer;
+}
+
+
+/* Escritorio */
+#desktop {
+  display: none;
+  height: 100%;
+  width: 100%;
+  background: url("../assets/fondos/fondowindows10.png") center/cover no-repeat;
+  position: relative;
+  color: white;
+  font-size: 1.5em;
+}
+
+#icons-area {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 20px;
+}
+
+.icon {
+  width: 120px;
+  text-align: center;
+  margin: 80px;
+  cursor: pointer;
+}
+
+.icon img {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 10px;
+}
+
+/* Barra de tareas */
+
+#taskbar {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 70px;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  color: white;
+}
+
+#start-btn {
+  background-color: #0078d7;
+  border: none;
+  padding: 10px 20px;
+  color: white;
+  font-size: 1.2em; 
+  border-radius: 5px; 
+  cursor: pointer;
+}
+
+#app-icons-container {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Espacio entre iconos de apps */
+  margin-left: 20px; /* Espacio entre el botón Inicio y las apps */
+  height: 100%; /* Asegura que el contenedor ocupe el alto de la barra */
+}
+
+/* Estilo para los nuevos iconos dinámicos (ejemplo con un div simple) */
+.app-icon-taskbar {
+  width: 40px; /* Un poco más grande para que se note */
+  height: 40px;
+  background-color: #0078d7; /* Color de ejemplo, puedes usar background-image */
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: inset 0 -3px 0 0 white; /* Simula la línea de "abierto" de Windows */
+  transition: background-color 0.2s;
+}
+
+.app-icon-taskbar:hover {
+    background-color: #005fa3;
+}
+
+.system-icons {
+  display: flex;
+  align-items: center;
+  gap: 10px; 
+}
+
+#battery-icon, #wifi-icon {
+  width: 24px; 
+  height: 24px;
+  fill: currentColor; 
+  cursor: pointer;
+}
+
+#clock {
+  font-size: 0.9em; 
+  padding-left: 10px;
+  cursor: pointer;
+}
+
+
+
+/* Menú inicio */
+#start-menu {
+  position: absolute;
+  bottom: 80px;
+  left: 20px;
+  background: rgba(0, 0, 0, 0.9);
+  padding: 20px;
+  border-radius: 10px;
+  display: none;
+  flex-direction: column;
+  width: 250px;
+}
+
+#start-menu button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5em;
+  text-align: left;
+  margin-bottom: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#start-menu button:hover {
+  color: #00aaff;
+}

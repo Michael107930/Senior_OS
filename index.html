@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Senior OS</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  
+  <!-- Pantalla de bloqueo -->
+  <div id="lock-screen">
+    <img src="assets/iconos/icono_Señor.png" alt="Fondo de Pantalla de Bloqueo" id="lock-bg" />
+    <h1>Ingrese su PIN</h1>
+    <input type="password" id="pin-input" maxlength="4" placeholder="****" />
+    <button id="unlock-btn">Desbloquear</button>
+  </div>
+
+  <!-- Escritorio -->
+  <div id="desktop">
+    <div id="icons-area">
+      <div class="icon" onclick="openApp('notes')">
+        <img src="assets/iconos/icono_Bloc_Notas.png" alt="Notas" />
+        <p>Bloc de Notas</p>
+      </div>
+      <div class="icon" onclick="openApp('calculadora')">
+        <img src="assets/iconos/Icono_Calculadora.png" alt="Calculadora" />
+        <p>Calculadora</p>
+      </div>
+      <div class="icon" onclick="openApp('correo')">
+        <img src="assets/iconos/icono_Correo.png" alt="Correo" />
+        <p>Correo</p>
+      </div>
+      <div class="icon" onclick="openApp('navegador')">
+        <img src="assets/iconos/icono_Navegador.png" alt="Navegador" />
+        <p>Navegador</p>
+      </div>
+      <div class="icon" onclick="openApp('letras')">
+        <img src="assets/iconos/icono_Letras.png" alt="Letras" />
+        <p>Sopa de Letras</p>
+      </div>
+      <div class="icon" onclick="openApp('plantas')">
+        <img src="assets/iconos/icono_Plantas.png" alt="Plantas" />
+        <p>Cuida tus Plantas</p>
+      </div>
+      <div class="icon" onclick="openApp('recetas')">
+        <img src="assets/iconos/icono_Recetas.png" alt="Recetas" />
+        <p>Prepara como un Chef</p>
+      </div>
+            <div class="icon" onclick="openApp('documentacion')">
+        <img src="assets/iconos/icono_Documentacion.png" alt="Documentacion" />
+        <p>Documentación</p>
+      </div>
+      <div class="icon" onclick="openApp('presentacion')">
+        <img src="assets/iconos/icono_Senior.png" alt="Presentacion" />
+        <p>Presentación</p>
+      </div>
+      <div class="icon" onclick="openApp('manualusuario')">
+        <img src="assets/iconos/icono_SeniorOS.png" alt="ManualUsuario" />
+        <p>Manual de Usuario</p>
+      </div>
+    </div>
+
+    <!-- Barra de tareas -->
+    <div id="taskbar">
+      <button id="start-btn">Inicio</button>
+      <div id="app-icons-container">
+        <!-- Aquí se agregarán los íconos de las aplicaciones abiertas -->
+      </div>
+      <div class="system-icons">
+        <img src="assets/iconos/icono_Bateria.svg" id="battery-icon" alt="Battery Icon">
+        <img src="assets/iconos/icono_Wifi.svg" id="wifi-icon" alt="WiFi Icon">
+        <div id="clock"></div>
+      </div>
+    </div>
+
+    <!-- Menú inicio -->
+    <div id="start-menu">
+      <button onclick="openApp('facebook')">🌐Facebook</button>
+      <button onclick="openApp('colpensiones')">🏠​Colpensiones</button>
+      <button onclick="openApp('colombiamayor')">👴🏻​Colombia Mayor</button>
+      <button onclick="openApp('nuevaeps')">🧑‍⚕️Nueva EPS</button>
+      <button onclick="openApp('eltiempo')">📰El Tiempo</button>
+      <button onclick="openApp('mercadolibre')">🛒​Mercado Libre</button>
+      <button onclick="openApp('ajustes')">⚙️ Ajustes</button>
+      <hr />
+      <button id="restart">🔄 Reiniciar</button>
+      <button id="shutdown">⏻ Apagar</button>
+    </div>
+  </div>
+  <script src="js/script.js"></script>
+</body>
+</html>
