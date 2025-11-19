@@ -7,7 +7,15 @@
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-  
+  <header class="font-toolbar" role="toolbar" aria-label="Barra para ajustar tamaño de fuente">
+  <div class="toolbar-inner">
+    <button id="decrease" title="Disminuir fuente" aria-label="Disminuir fuente">A−</button>
+    <input id="fontRange" type="range" min="12" max="28" step="1" aria-label="Tamaño de fuente" />
+    <button id="increase" title="Aumentar fuente" aria-label="Aumentar fuente">A+</button>
+    <button id="reset" title="Restablecer" aria-label="Restablecer tamaño por defecto">Reset</button>
+    <div id="currentSize" aria-live="polite" class="size-indicator"></div>
+  </div>
+</header>
   <!-- Pantalla de bloqueo -->
   <div id="lock-screen">
     <img src="assets/iconos/icono_Señor.png" alt="Fondo de Pantalla de Bloqueo" id="lock-bg" />
@@ -70,6 +78,8 @@
       <div class="system-icons">
         <img src="assets/iconos/icono_Bateria.svg" id="battery-icon" alt="Battery Icon">
         <img src="assets/iconos/icono_Wifi.svg" id="wifi-icon" alt="WiFi Icon">
+        <img src="assets/iconos/icono_Volumen.svg" id="volumen-icon" alt="Volumen Icon">
+        <img src="assets/iconos/icono_Mensajes.svg" id="mensajes-icon" alt="Mensajes Icon">
         <div id="clock"></div>
       </div>
     </div>
@@ -82,6 +92,7 @@
       <button onclick="openApp('nuevaeps')">🧑‍⚕️Nueva EPS</button>
       <button onclick="openApp('eltiempo')">📰El Tiempo</button>
       <button onclick="openApp('mercadolibre')">🛒​Mercado Libre</button>
+      <button onclick="openApp('agenda')">📖​Agenda</button>
       <button onclick="openApp('ajustes')">⚙️ Ajustes</button>
       <hr />
       <button id="restart">🔄 Reiniciar</button>

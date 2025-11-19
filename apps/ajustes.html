@@ -1,8 +1,329 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <title>Title</title>
-    </head>
-    <body></body>
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Simulador: Configuración de Accesibilidad (Narrador)</title>
+  <style>
+    :root{
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --text: #1b1f23;
+      --accent: #0b7cff;
+      --muted: #6b7280;
+      --focus: #ffb020;
+      --radius: 12px;
+      --gap: 14px;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      --base-font: 16px;
+    }
+    /* High-contrast theme variables (applied with class .hc) */
+    .hc{ --bg: #000; --panel: #000; --text: #fff; --accent: #ffd400; --muted:#fff; }
+    .dyslexic{ font-family: "OpenDyslexic", "Lexend", Inter, system-ui, sans-serif; }
+
+    html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-size:var(--base-font)}
+    .app{display:grid;grid-template-columns:320px 1fr;gap:var(--gap);padding:24px;min-height:100vh}
+
+    /* Sidebar */
+    .sidebar{background:var(--panel);border-radius:var(--radius);padding:16px;box-shadow:0 6px 18px rgba(11,28,50,0.06)}
+    .logo{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+    .logo .icon{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#7ad3ff);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700}
+    nav a{display:block;padding:10px;border-radius:8px;color:var(--text);text-decoration:none;margin-bottom:6px}
+    nav a:focus, nav a:hover{outline:none;background:rgba(11,124,255,0.08)}
+
+    /* Main panel */
+    .panel{background:var(--panel);border-radius:var(--radius);padding:20px;box-shadow:0 6px 18px rgba(11,28,50,0.06)}
+    h1{margin:0 0 6px 0;font-size:1.5rem}
+    p.lead{color:var(--muted);margin-top:2px}
+
+    .controls{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px}
+    .control{background:rgba(11,28,50,0.02);padding:12px;border-radius:10px;min-width:200px}
+    label.switch{display:flex;align-items:center;gap:8px;cursor:pointer}
+    input[type=range]{width:100%}
+
+    .reader-controls{display:flex;gap:8px;align-items:center;margin-top:10px}
+    button{background:var(--accent);border:none;color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer}
+    button.ghost{background:transparent;color:var(--accent);border:1px solid rgba(11,124,255,0.12)}
+    button:focus{outline:3px solid var(--focus)}
+
+    /* Focus visible for keyboard users */
+    *:focus{outline:3px solid transparent;outline-offset:2px}
+    :focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+
+    /* Sample content */
+    .sample{margin-top:18px;padding:14px;border-radius:10px;background:linear-gradient(180deg,rgba(11,28,50,0.02),transparent)}
+    .sample h2{margin:0 0 8px}
+
+    /* Footer small */
+    .small{font-size:0.875rem;color:var(--muted)}
+
+    /* Large text mode */
+    .large-text{--base-font:20px}
+
+    /* Magnifier */
+    .magnifier{position:fixed;right:22px;bottom:22px;background:var(--panel);padding:10px;border-radius:14px;box-shadow:0 8px 26px rgba(11,28,50,0.08)}
+
+    /* Responsive */
+    @media (max-width:900px){.app{grid-template-columns:1fr; padding:12px}}
+
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main" style="position:absolute;left:-999px;top:auto;width:1px;height:1px;overflow:hidden;">Saltar al contenido principal</a>
+  <div class="app" id="app">
+    <aside class="sidebar" aria-label="Barra lateral de navegación">
+      <div class="logo"><div class="icon" aria-hidden="true">A</div><div>
+        <strong>Accesibilidad</strong>
+        <div class="small">Simulador de configuración</div>
+      </div></div>
+      <nav aria-label="Secciones">
+        <a href="#" role="button" tabindex="0">Narrador</a>
+        <a href="#" role="button" tabindex="0">Tamaño de texto</a>
+        <a href="#" role="button" tabindex="0">Contraste</a>
+        <a href="#" role="button" tabindex="0">Subtítulos</a>
+      </nav>
+      <div style="height:12px"></div>
+      <div class="small">Atajos: <kbd>N</kbd> narrador · <kbd>H</kbd> hablar selección</div>
+    </aside>
+
+    <main id="main" class="panel" tabindex="0">
+      <h1>Configuración de accesibilidad</h1>
+      <p class="lead">Aquí puedes probar funciones comunes: narrador (text-to-speech), aumento de texto, contraste alto y más. Todo se ejecuta en tu navegador.</p>
+
+      <section aria-labelledby="narrator-title">
+        <h2 id="narrator-title">Narrador (Text-to-Speech)</h2>
+        <div class="controls">
+          <div class="control" role="region" aria-label="Controles de narrador">
+            <label class="switch"><input id="narratorToggle" type="checkbox" aria-checked="false"> <strong>Activar narrador</strong></label>
+            <div style="margin-top:8px">
+              <label for="voiceSelect">Voz:</label>
+              <select id="voiceSelect" aria-label="Seleccionar voz"></select>
+            </div>
+            <div style="margin-top:8px">
+              <label for="rate">Velocidad: <span id="rateVal">1</span>x</label>
+              <input id="rate" type="range" min="0.5" max="2" step="0.1" value="1" />
+            </div>
+            <div style="margin-top:8px">
+              <label for="pitch">Tono: <span id="pitchVal">1</span></label>
+              <input id="pitch" type="range" min="0.5" max="2" step="0.1" value="1" />
+            </div>
+
+            <div class="reader-controls">
+              <button id="readPage">Leer página</button>
+              <button id="readSelection" class="ghost">Leer selección</button>
+              <button id="stopSpeech" class="ghost">Detener</button>
+            </div>
+
+            <div style="margin-top:8px" class="small">Consejo: selecciona texto y pulsa <kbd>H</kbd> para leer la selección.</div>
+          </div>
+
+          <div class="control" role="region" aria-label="Ajustes visuales">
+            <label><input id="largeText" type="checkbox"> <strong>Texto grande</strong></label>
+            <div style="margin-top:8px"><label><input id="dyslexicFont" type="checkbox"> <strong>Fuente amigable (Dyslexic)</strong></label></div>
+            <div style="margin-top:8px"><label><input id="highContrast" type="checkbox"> <strong>Contraste alto</strong></label></div>
+            <div style="margin-top:8px"><label><input id="invertColors" type="checkbox"> <strong>Invertir colores</strong></label></div>
+          </div>
+
+          <div class="control" role="region" aria-label="Subtítulos y audio">
+            <label><input id="captions" type="checkbox"> <strong>Mostrar subtítulos de ejemplo</strong></label>
+            <div style="margin-top:10px"><button id="playDemo" class="ghost">Reproducir demo de audio</button></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="sample" aria-live="polite">
+        <h2>Ejemplo de contenido</h2>
+        <p>Este es un texto de ejemplo para que el narrador lo lea. Puedes seleccionar cualquier parte y usar la función de "Leer selección". También hay botones y controles navegables con el teclado.</p>
+        <p><strong>Nota:</strong> el simulador usa la API Web Speech (speechSynthesis). Si tu navegador no la soporta, verás un aviso.</p>
+
+        <div style="margin-top:12px">
+          <button id="announceBtn">Anunciar (región en vivo)</button>
+          <button id="focusDemo">Ir a foco demo</button>
+        </div>
+
+      </section>
+
+      <div style="margin-top:18px" class="small">Diseñado para demostración. Incluye roles ARIA, atajos y ejemplos prácticos.</div>
+    </main>
+
+    <div class="magnifier" role="region" aria-label="Panel de estado" aria-live="polite">
+      <div><strong>Estado:</strong></div>
+      <div id="status">Narrador: desactivado</div>
+      <div id="liveAnn" style="margin-top:6px;font-size:0.9rem;color:var(--muted)"></div>
+    </div>
+
+    <!-- Subtítulos demo -->
+    <div id="captionsBox" style="position:fixed;left:50%;transform:translateX(-50%);bottom:120px;background:rgba(0,0,0,0.75);color:#fff;padding:10px 18px;border-radius:8px;display:none;max-width:80%;text-align:center" aria-hidden="true"></div>
+
+  </div>
+
+  <script>
+    // --- Variables y elementos ---
+    const narratorToggle = document.getElementById('narratorToggle');
+    const voiceSelect = document.getElementById('voiceSelect');
+    const rate = document.getElementById('rate');
+    const pitch = document.getElementById('pitch');
+    const rateVal = document.getElementById('rateVal');
+    const pitchVal = document.getElementById('pitchVal');
+    const readPage = document.getElementById('readPage');
+    const readSelection = document.getElementById('readSelection');
+    const stopSpeech = document.getElementById('stopSpeech');
+    const status = document.getElementById('status');
+    const liveAnn = document.getElementById('liveAnn');
+    const largeText = document.getElementById('largeText');
+    const highContrast = document.getElementById('highContrast');
+    const dyslexicFont = document.getElementById('dyslexicFont');
+    const captions = document.getElementById('captions');
+    const captionsBox = document.getElementById('captionsBox');
+    const playDemo = document.getElementById('playDemo');
+    const announceBtn = document.getElementById('announceBtn');
+
+    // Check support
+    const supportsSpeech = 'speechSynthesis' in window;
+    if(!supportsSpeech){
+      voiceSelect.innerHTML = '<option>No disponible en este navegador</option>';
+      readPage.disabled = true; readSelection.disabled = true; stopSpeech.disabled = true;
+      status.textContent = 'Narrador: no soportado en este navegador';
+      liveAnn.textContent = 'La API Web Speech (speechSynthesis) no está disponible.';
+    }
+
+    // Populate voices
+    function loadVoices(){
+      const voices = speechSynthesis.getVoices();
+      voiceSelect.innerHTML = '';
+      if(voices.length===0){
+        voiceSelect.innerHTML = '<option>Cargando voces...</option>';
+        return;
+      }
+      voices.forEach(v=>{
+        const opt = document.createElement('option');
+        opt.value = v.name + '|' + v.lang;
+        opt.textContent = v.name + ' ('+v.lang+')';
+        voiceSelect.appendChild(opt);
+      });
+    }
+    if(supportsSpeech){
+      loadVoices();
+      speechSynthesis.onvoiceschanged = loadVoices;
+    }
+
+    // Helper to speak text
+    function speak(text){
+      if(!supportsSpeech) return;
+      speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      const [vname, vlang] = (voiceSelect.value || '').split('|');
+      const voices = speechSynthesis.getVoices();
+      const chosen = voices.find(x=>x.name===vname) || voices.find(x=>x.lang && x.lang.startsWith('es')) || voices[0];
+      if(chosen) utter.voice = chosen;
+      utter.lang = vlang || utter.lang || 'es-ES';
+      utter.rate = parseFloat(rate.value);
+      utter.pitch = parseFloat(pitch.value);
+      speechSynthesis.speak(utter);
+      updateStatus('Narrador: leyendo...');
+      utter.onend = ()=> updateStatus('Narrador: activo');
+    }
+
+    function updateStatus(text){
+      status.textContent = text;
+      liveAnn.textContent = text; // región live para lectores de pantalla
+    }
+
+    // Toggle narrator
+    narratorToggle.addEventListener('change', ()=>{
+      const on = narratorToggle.checked;
+      narratorToggle.setAttribute('aria-checked', on);
+      if(on){
+        updateStatus('Narrador: activo');
+      } else {
+        speechSynthesis.cancel();
+        updateStatus('Narrador: desactivado');
+      }
+    });
+
+    // Read whole page
+    readPage.addEventListener('click', ()=>{
+      if(!narratorToggle.checked) { updateStatus('Activa el narrador primero'); return; }
+      const text = Array.from(document.querySelectorAll('main, .sample')).map(n=>n.innerText).join('\n');
+      speak(text);
+    });
+
+    // Read selection
+    readSelection.addEventListener('click', ()=>{
+      if(!narratorToggle.checked) { updateStatus('Activa el narrador primero'); return; }
+      const sel = window.getSelection().toString().trim();
+      if(!sel){ updateStatus('No hay selección activa'); return; }
+      speak(sel);
+    });
+
+    stopSpeech.addEventListener('click', ()=>{ speechSynthesis.cancel(); updateStatus('Narrador: detenido'); });
+
+    rate.addEventListener('input', ()=>{ rateVal.textContent = rate.value; });
+    pitch.addEventListener('input', ()=>{ pitchVal.textContent = pitch.value; });
+
+    // Visual toggles
+    largeText.addEventListener('change', ()=>{
+      if(largeText.checked) document.documentElement.classList.add('large-text'); else document.documentElement.classList.remove('large-text');
+    });
+    highContrast.addEventListener('change', ()=>{
+      if(highContrast.checked) document.documentElement.classList.add('hc'); else document.documentElement.classList.remove('hc');
+    });
+    dyslexicFont.addEventListener('change', ()=>{
+      if(dyslexicFont.checked) document.documentElement.classList.add('dyslexic'); else document.documentElement.classList.remove('dyslexic');
+    });
+
+    // Captions demo (simulate subtitles)
+    captions.addEventListener('change', ()=>{
+      captionsBox.style.display = captions.checked ? 'block' : 'none';
+      captionsBox.setAttribute('aria-hidden', captions.checked ? 'false' : 'true');
+      captionsBox.textContent = captions.checked ? 'Subtítulos: Este es un ejemplo de subtítulos sincronizados con audio.' : '';
+    });
+    playDemo.addEventListener('click', ()=>{
+      // Play a short audio-like demo by speaking and showing captions
+      if(!supportsSpeech){ updateStatus('La demo requiere soporte de speechSynthesis'); return; }
+      const demoText = 'Hola. Este es un ejemplo de audio y subtítulos. Observa la caja de subtítulos.';
+      captionsBox.style.display = 'block'; captions.checked = true; captionsBox.setAttribute('aria-hidden','false');
+      captionsBox.textContent = '';
+      const words = demoText.split(' ');
+      let i = 0;
+      const t = setInterval(()=>{
+        if(i>=words.length){ clearInterval(t); captionsBox.textContent = 'Fin del audio.'; return; }
+        captionsBox.textContent = words.slice(0,i+1).join(' ');
+        i++;
+      }, 350);
+      if(narratorToggle.checked) speak(demoText); else {
+        // If narrator is off, still show captions and announce
+        updateStatus('Reproduciendo demo (sin narrador)');
+      }
+    });
+
+    // Live region announce button
+    announceBtn.addEventListener('click', ()=>{
+      const text = 'Atención: Esto es una prueba de la región viva. Puedes usar esto para enviar anuncios a lectores de pantalla.';
+      liveAnn.textContent = text;
+      if(narratorToggle.checked) speak(text);
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e)=>{
+      if(e.key.toLowerCase()==='n'){
+        narratorToggle.checked = !narratorToggle.checked; narratorToggle.dispatchEvent(new Event('change'));
+      }
+      if(e.key.toLowerCase()==='h'){
+        // leer selección
+        readSelection.click();
+      }
+    });
+
+    // Small helpers for focus demo
+    document.getElementById('focusDemo').addEventListener('click', ()=>{ document.querySelector('main').focus(); });
+
+    // Initialize status
+    if(supportsSpeech) updateStatus('Narrador: desactivado — voces cargadas: ' + (speechSynthesis.getVoices().length||'0'));
+
+    // Accessibility notes: add aria descriptions for interactive elements
+    narratorToggle.setAttribute('aria-describedby','narrator-title');
+
+  </script>
+</body>
 </html>

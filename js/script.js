@@ -9,6 +9,74 @@ document.addEventListener("DOMContentLoaded", () => {
   const shutdownBtn = document.getElementById("shutdown");
   const clock = document.getElementById("clock");
 
+  (function() {
+  // valores por defecto y límites
+  const DEFAULT = 16;            // 16px = 1rem por defecto
+  const MIN = 12;
+  const MAX = 28;
+
+  const range = document.getElementById('fontRange');
+  const btnInc = document.getElementById('increase');
+  const btnDec = document.getElementById('decrease');
+  const btnReset = document.getElementById('reset');
+  const current = document.getElementById('currentSize');
+
+  // inicializar atributos del range
+  range.min = MIN;
+  range.max = MAX;
+  range.step = 1;
+
+  // cargar tamaño guardado si existe
+  const saved = Number(localStorage.getItem('siteFontSize'));
+  const initial = (saved && !Number.isNaN(saved)) ? saved : DEFAULT;
+
+  function apply(sizePx) {
+    // Aplica al root (html). Esto hace que 1rem = sizePx.
+    document.documentElement.style.fontSize = sizePx + 'px';
+    range.value = sizePx;
+    current.textContent = `${sizePx}px (${(sizePx / DEFAULT).toFixed(2)}rem)`;
+    // guarda preferencia
+    localStorage.setItem('siteFontSize', String(sizePx));
+  }
+
+  // eventos
+  range.addEventListener('input', (e) => {
+    apply(e.target.value);
+  });
+
+  btnInc.addEventListener('click', () => {
+    let v = Math.min(MAX, Number(range.value) + 1);
+    apply(v);
+  });
+
+  btnDec.addEventListener('click', () => {
+    let v = Math.max(MIN, Number(range.value) - 1);
+    apply(v);
+  });
+
+  btnReset.addEventListener('click', () => {
+    localStorage.removeItem('siteFontSize');
+    apply(DEFAULT);
+  });
+
+  // atajos de teclado accesibles: Ctrl + +, Ctrl + -
+  window.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && !e.shiftKey && (e.key === '+' || e.key === '=')) {
+      e.preventDefault();
+      btnInc.click();
+    } else if (e.ctrlKey && e.key === '-') {
+      e.preventDefault();
+      btnDec.click();
+    } else if (e.ctrlKey && e.key.toLowerCase() === '0') {
+      e.preventDefault();
+      btnReset.click();
+    }
+  });
+
+  // Aplicar inicial
+  apply(initial);
+})();
+
   // Desbloquear
   unlockBtn.addEventListener("click", () => {
     if (pinInput.value === "1234") {
@@ -75,13 +143,15 @@ function openApp(appName) {
   } else if (appName === 'mercadolibre') {
     window.open('https://www.mercadolibre.com.co', '_blank', `width=${windowWidth},height=${windowHeight},left=${leftPosition},top=${topPosition}`);
   } else if (appName === 'ajustes') {
-    window.open('../apps/ajustes.html', '_blank', 'width=800,height=600');
-  } else if (appName === 'documentacion') {
-    window.open('../apps/documentacion.html', '_blank', 'width=800,height=600');
+    window.open('../apps/ajustes.html', '_blank', `width=${windowWidth},height=${windowHeight},left=${leftPosition},top=${topPosition}`);
+  } else if (appName === 'agenda') {
+    window.open('../apps/agenda.html', '_blank', `width=${windowWidth},height=${windowHeight},left=${leftPosition},top=${topPosition}`);
+  }else if (appName === 'documentacion') {
+    window.open('https://1drv.ms/w/c/7ee0f5e33317509f/Ee3N9nZuWchKlUT_rz5ZbasBknbgpBYh5QwI4ZdL_jLxRw?e=A0yIb9', '_blank', `width=${windowWidth},height=${windowHeight},left=${leftPosition},top=${topPosition}`);
   } else if (appName === 'presentacion') {
-    window.open('../apps/presentacion.html', '_blank', 'width=800,height=600');
+    window.open('../apps/presentacion.html', '_blank', `width=${windowWidth},height=${windowHeight},left=${leftPosition},top=${topPosition}`);
   } else if (appName === 'manualusuario') {
-    window.open('../apps/manual.html', '_blank', 'width=800,height=600');
+    window.open('https://www.canva.com/design/DAG5IyJy0lk/fIbRc3si1z5KhqQh-5y5nw/edit?utm_content=DAG5IyJy0lk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton', '_blank', `width=${windowWidth},height=${windowHeight},left=${leftPosition},top=${topPosition}`);
   } else {
     console.log('App no reconocida:', appName);
   }

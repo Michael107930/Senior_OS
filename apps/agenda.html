@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Agenda de Actividades</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .ventana {
+            max-width: 650px;
+            margin: 0 auto;
+            background: #2563eb;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .barra-titulo {
+            background: #1e40af;
+            padding: 15px 20px;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .botones-ventana {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-ventana {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-minimizar { background: #fbbf24; }
+        .btn-maximizar { background: #10b981; }
+        .btn-cerrar { background: #ef4444; }
+
+        .container {
+            background: #f8fafc;
+            padding: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .titulo-principal {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .icono-agenda {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #a855f7, #7c3aed);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #1e293b;
+            font-weight: 700;
+        }
+
+        .btn-agregar {
+            background: linear-gradient(135deg, #a855f7, #7c3aed);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+        }
+
+        .btn-agregar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(168, 85, 247, 0.4);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.activo {
+            display: flex;
+        }
+
+        .modal-contenido {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 20px;
+        }
+
+        .campo {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #334155;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: inherit;
+            transition: border 0.3s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #a855f7;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .botones-modal {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .btn-modal {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-guardar {
+            background: #a855f7;
+            color: white;
+        }
+
+        .btn-guardar:hover {
+            background: #9333ea;
+        }
+
+        .btn-cancelar {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        .btn-cancelar:hover {
+            background: #cbd5e1;
+        }
+
+        .lista-actividades {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .actividad {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+
+        .actividad:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            transform: translateY(-2px);
+        }
+
+        .checkbox {
+            width: 28px;
+            height: 28px;
+            border: 3px solid #cbd5e1;
+            border-radius: 6px;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: all 0.3s;
+        }
+
+        .checkbox:hover {
+            border-color: #a855f7;
+        }
+
+        .checkbox.completado {
+            background: #a855f7;
+            border-color: #a855f7;
+            position: relative;
+        }
+
+        .checkbox.completado::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .actividad-info {
+            flex: 1;
+        }
+
+        .actividad-titulo {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .etiqueta {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .etiqueta-medica {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .etiqueta-social {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .etiqueta-personal {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .etiqueta-trabajo {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .actividad-detalles {
+            display: flex;
+            gap: 20px;
+            font-size: 16px;
+            color: #64748b;
+        }
+
+        .detalle {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-eliminar {
+            background: #fee2e2;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            color: #dc2626;
+            font-size: 20px;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: all 0.3s;
+        }
+
+        .btn-eliminar:hover {
+            background: #fecaca;
+            transform: scale(1.1);
+        }
+
+        .sin-actividades {
+            text-align: center;
+            padding: 60px 20px;
+            color: #94a3b8;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="ventana">
+        <div class="barra-titulo">
+            Mi Agenda de Actividades
+            <div class="botones-ventana">
+                <button class="btn-ventana btn-minimizar"></button>
+                <button class="btn-ventana btn-maximizar"></button>
+                <button class="btn-ventana btn-cerrar"></button>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="header">
+                <div class="titulo-principal">
+                    <div class="icono-agenda">📅</div>
+                    <h1>Mi Agenda de Actividades</h1>
+                </div>
+                <button class="btn-agregar" onclick="abrirModal()">
+                    + Agregar Actividad
+                </button>
+            </div>
+
+            <div class="lista-actividades" id="listaActividades">
+                <div class="sin-actividades">No hay actividades programadas</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="modal">
+        <div class="modal-contenido">
+            <div class="modal-header">Nueva Actividad</div>
+            
+            <div class="campo">
+                <label for="titulo">Título</label>
+                <input type="text" id="titulo" placeholder="Ej: Tomar medicamentos">
+            </div>
+
+            <div class="campo">
+                <label for="categoria">Categoría</label>
+                <select id="categoria">
+                    <option value="medica">Médica</option>
+                    <option value="social">Social</option>
+                    <option value="personal">Personal</option>
+                    <option value="trabajo">Trabajo</option>
+                </select>
+            </div>
+
+            <div class="campo">
+                <label for="fecha">Fecha</label>
+                <input type="date" id="fecha">
+            </div>
+
+            <div class="campo">
+                <label for="hora">Hora</label>
+                <input type="time" id="hora">
+            </div>
+
+            <div class="campo">
+                <label for="notas">Notas (opcional)</label>
+                <textarea id="notas" placeholder="Detalles adicionales..."></textarea>
+            </div>
+
+            <div class="botones-modal">
+                <button class="btn-modal btn-cancelar" onclick="cerrarModal()">Cancelar</button>
+                <button class="btn-modal btn-guardar" onclick="guardarActividad()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let actividades = [];
+
+        function abrirModal() {
+            document.getElementById('modal').classList.add('activo');
+        }
+
+        function cerrarModal() {
+            document.getElementById('modal').classList.remove('activo');
+            limpiarFormulario();
+        }
+
+        function limpiarFormulario() {
+            document.getElementById('titulo').value = '';
+            document.getElementById('categoria').value = 'medica';
+            document.getElementById('fecha').value = '';
+            document.getElementById('hora').value = '';
+            document.getElementById('notas').value = '';
+        }
+
+        function guardarActividad() {
+            const titulo = document.getElementById('titulo').value;
+            const categoria = document.getElementById('categoria').value;
+            const fecha = document.getElementById('fecha').value;
+            const hora = document.getElementById('hora').value;
+            const notas = document.getElementById('notas').value;
+
+            if (!titulo || !fecha || !hora) {
+                alert('Por favor complete los campos obligatorios');
+                return;
+            }
+
+            const actividad = {
+                id: Date.now(),
+                titulo,
+                categoria,
+                fecha,
+                hora,
+                notas,
+                completada: false
+            };
+
+            actividades.push(actividad);
+            actividades.sort((a, b) => new Date(a.fecha + ' ' + a.hora) - new Date(b.fecha + ' ' + b.hora));
+            
+            mostrarActividades();
+            cerrarModal();
+        }
+
+        function toggleCompletada(id) {
+            const actividad = actividades.find(a => a.id === id);
+            if (actividad) {
+                actividad.completada = !actividad.completada;
+                mostrarActividades();
+            }
+        }
+
+        function eliminarActividad(id) {
+            if (confirm('¿Está seguro de eliminar esta actividad?')) {
+                actividades = actividades.filter(a => a.id !== id);
+                mostrarActividades();
+            }
+        }
+
+        function formatearFecha(fecha) {
+            const opciones = { weekday: 'long', day: 'numeric', month: 'long' };
+            const fechaObj = new Date(fecha + 'T00:00:00');
+            const resultado = fechaObj.toLocaleDateString('es-ES', opciones);
+            return resultado.charAt(0).toUpperCase() + resultado.slice(1);
+        }
+
+        function mostrarActividades() {
+            const lista = document.getElementById('listaActividades');
+            
+            if (actividades.length === 0) {
+                lista.innerHTML = '<div class="sin-actividades">No hay actividades programadas</div>';
+                return;
+            }
+
+            lista.innerHTML = actividades.map(act => `
+                <div class="actividad">
+                    <div class="checkbox ${act.completada ? 'completado' : ''}" 
+                         onclick="toggleCompletada(${act.id})">
+                    </div>
+                    <div class="actividad-info">
+                        <div class="actividad-titulo">
+                            ${act.titulo}
+                            <span class="etiqueta etiqueta-${act.categoria}">
+                                ${act.categoria.charAt(0).toUpperCase() + act.categoria.slice(1)}
+                            </span>
+                        </div>
+                        <div class="actividad-detalles">
+                            <div class="detalle">
+                                📅 ${formatearFecha(act.fecha)}
+                            </div>
+                            <div class="detalle">
+                                🕐 ${act.hora}
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn-eliminar" onclick="eliminarActividad(${act.id})">
+                        🗑️
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal');
+            if (event.target === modal) {
+                cerrarModal();
+            }
+        }
+
+        mostrarActividades();
+    </script>
+</body>
+</html>
